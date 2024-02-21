@@ -13,8 +13,15 @@ export default function TextInput(props:InputProps) {
 
     const displayShoPassword = useMemo(()=>{
         if(type === 'password'){
-            return <p className=' text-right font-sm'><input type='checkbox' checked={isShowPassword}  onChange={(e)=>setIsShowPassword(e.target.checked)} className=' pr-3'/> Show Password </p>
-        }
+            return (<p className=' text-right font-sm'>
+                        <input 
+                            type='checkbox' 
+                            checked={isShowPassword}  
+                            onChange={(e)=>setIsShowPassword(e.target.checked)} 
+                            className=' pr-4'/> 
+                            <span className=' mr-4'>Show Password</span> 
+                    </p>)
+        } 
     },[isShowPassword, type])
   
     const newTypes = useMemo(()=>{
