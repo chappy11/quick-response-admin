@@ -1,31 +1,75 @@
-"use client";;
+"use client";
+
 import Button from "@/app/_lib/components/Button";
 import TextInput from "@/app/_lib/components/TextInput";
+import { loginReducer } from "@/app/_lib/reducer/admin/LoginReducer";
+import { adminLogin } from "@/app/_lib/services/Admin.service";
+import { KEY, insertStorage } from "@/app/_lib/utils/storage.utils";
 import Link from "next/link";
-import { toast } from 'react-toastify';
+import { useReducer } from "react";
+import { toast } from "react-toastify";
+
 export default function Login() {
+  const [loginState, dispatch] = useReducer(loginReducer, {
+    username: "",
+    password: "",
+  });
 
-    function handleSubmit(){
-        toast('🦄 Error Login',{type:'error'});
+  async function handleSubmit() {
+    try {
+      const { username, password } = loginState;
+      if (!username) {
+        toast.error("Username is required");
+        return;
+      }
+
+      if (!password) {
+        toast.error("Password is required");
+        return;
+      }
+
+      const resp = await adminLogin(loginState);
+      if (!resp) {
+        toast.error("Account not found");
+        return;
+      }
+
+      insertStorage(KEY.ACCOUNT, resp);
+    } catch (error: any) {
+      toast.error(error?.response?.data?.message);
     }
+  }
 
-    return (
+  return (
     <div className=" flex flex-1 w-full h-full  justify-center items-center">
-        <div className=" w-3/4 shadow-lg p-8">
-            <h1 className=" text-red-500 text-2xl font-bold">Sign In</h1>
-            <div className=" h-10"/>
-            <TextInput type="text" label={"Email"}/>
-            <div className=" h-5"/>
-            <TextInput type="password" label="Password" />
-            <div className=" mt-8 w-full"/>
-                <Button  text={"Sign In"} onClick={handleSubmit} />
-                <p className=" mt-8 text-sm text-center text-red-600 hover:text-red-400">
-                    <Link href={'/'} >
-                        Back To Home
-                    </Link>
-                </p>
-            </div>
-           
+      <div className=" w-3/4 shadow-lg p-8">
+        <h1 className=" text-red-500 text-2xl font-bold">Sign In</h1>
+        <div className=" h-10" />
+        <TextInput
+          type="text"
+          name="username"
+          label={"Email"}
+          onChange={(e) =>
+            dispatch({ type: e.target.name, [e.target.name]: e.target.value })
+          }
+          value={loginState.username}
+        />
+        <div className=" h-5" />
+        <TextInput
+          type="password"
+          name="password"
+          label="Password"
+          value={loginState.password}
+          onChange={(e) =>
+            dispatch({ type: e.target.name, [e.target.name]: e.target.value })
+          }
+        />
+        <div className=" mt-8 w-full" />
+        <Button text={"Sign In"} onClick={handleSubmit} />
+        <p className=" mt-8 text-sm text-center text-red-600 hover:text-red-400">
+          <Link href={"/"}>Back To Home</Link>
+        </p>
+      </div>
     </div>
-  )
+  );
 }

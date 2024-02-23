@@ -11,7 +11,7 @@ export default function TextInput(props:InputProps) {
     const {label,type} = props;
     const [isShowPassword,setIsShowPassword] = useState<boolean>(false);
 
-    const displayShoPassword = useMemo(()=>{
+    const displayShowPassword = useMemo(()=>{
         if(type === 'password'){
             return (<p className=' text-right font-sm'>
                         <input 
@@ -46,7 +46,7 @@ export default function TextInput(props:InputProps) {
             </span>
             </label>
       </div>
-      {displayShoPassword}
+      {displayShowPassword}
       </>
   )
 }
