@@ -35,8 +35,8 @@ export default function AuthLayout({
         </div>
       </div>
       <div className=" w-full">
-        <div className=" h-16 flex items-center  bg-red-500">
-          <p className="  p-2 font-bold text-lg text-white">
+        <div className=" h-16 flex items-center bg-red-100">
+          <p className="  p-2 font-bold text-lg text-red-600">
             Quick Response Admin
           </p>
         </div>
