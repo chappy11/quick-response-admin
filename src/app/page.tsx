@@ -2,10 +2,19 @@
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React from "react";
+import { createSuperAdmin } from "./_lib/services/Admin.service";
+
 export default function Home(): React.ReactNode {
   const router = useRouter();
+
   function handleGoToLogin() {
     router.push("/login");
+  }
+
+  async function handleCreateAdmin() {
+    const response = await createSuperAdmin();
+
+    console.log(response);
   }
 
   return (
