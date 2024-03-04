@@ -1,9 +1,7 @@
 "use client";
-import { collection, getDocs } from "firebase/firestore";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import React, { useEffect } from "react";
-import { db } from "./_lib/config/firebaseConfig";
+import React from "react";
 import { createSuperAdmin } from "./_lib/services/Admin.service";
 
 export default function Home(): React.ReactNode {
@@ -12,24 +10,6 @@ export default function Home(): React.ReactNode {
   function handleGoToLogin() {
     router.push("/login");
   }
-
-  async function getFireStoreData() {
-    const querySnapshot = await getDocs(collection(db, "Users"));
-
-    let data: any[] = [];
-    await querySnapshot.forEach((doc) => {
-      data.push({ id: doc.id, ...doc.data() });
-    });
-
-    return data as any;
-  }
-
-  async function getData() {
-    console.log(await getFireStoreData());
-  }
-  useEffect(() => {
-    getData();
-  }, []);
 
   async function handleCreateAdmin() {
     const response = await createSuperAdmin();
