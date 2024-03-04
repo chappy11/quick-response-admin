@@ -1,41 +1,40 @@
 "use client";
+import { collection, getDocs } from "firebase/firestore";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
-import {collection,getDocs} from 'firebase/firestore';
 import { db } from "./_lib/config/firebaseConfig";
 import { createSuperAdmin } from "./_lib/services/Admin.service";
 
-
 export default function Home(): React.ReactNode {
   const router = useRouter();
+
   function handleGoToLogin() {
     router.push("/login");
   }
 
-  async function getFireStoreData(){
-    const querySnapshot = await getDocs(collection(db,"Users"));
-    
-    let data:any[] = [];
-    await querySnapshot.forEach((doc)=>{
-      data.push({id:doc.id,...doc.data()});
-    })
+  async function getFireStoreData() {
+    const querySnapshot = await getDocs(collection(db, "Users"));
+
+    let data: any[] = [];
+    await querySnapshot.forEach((doc) => {
+      data.push({ id: doc.id, ...doc.data() });
+    });
 
     return data as any;
   }
 
-  async function getData(){
-    console.log( await getFireStoreData());
+  async function getData() {
+    console.log(await getFireStoreData());
   }
   useEffect(() => {
     getData();
-  }, [])
-  
+  }, []);
 
-  async function handleCreateAdmin(){
+  async function handleCreateAdmin() {
     const response = await createSuperAdmin();
- 
-    console.log(response)
+
+    console.log(response);
   }
 
   return (
@@ -46,7 +45,7 @@ export default function Home(): React.ReactNode {
         </h1>
         <div className=" flex flex-row items-center mt-8">
           <button
-            onClick={handleCreateAdmin}
+            onClick={handleGoToLogin}
             className=" px-10 py-3 bg-red-500 rounded-full text-white hover:bg-red-800"
           >
             Sign In

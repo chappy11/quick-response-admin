@@ -1,19 +1,25 @@
 "use client";
-
 import Button from "@/app/_lib/components/Button";
 import TextInput from "@/app/_lib/components/TextInput";
 import { loginReducer } from "@/app/_lib/reducer/admin/LoginReducer";
-import { adminLogin } from "@/app/_lib/services/Admin.service";
+import { loginAdmin } from "@/app/_lib/services/Admin.service";
+import { useRouter } from "next/navigation";
+
 import { KEY, insertStorage } from "@/app/_lib/utils/storage.utils";
 import Link from "next/link";
 import { useReducer } from "react";
 import { toast } from "react-toastify";
 
 export default function Login() {
+  const router = useRouter();
   const [loginState, dispatch] = useReducer(loginReducer, {
     username: "",
     password: "",
   });
+
+  function redirectToHome() {
+    router.push("/");
+  }
 
   async function handleSubmit() {
     try {
@@ -27,16 +33,23 @@ export default function Login() {
         toast.error("Password is required");
         return;
       }
-
-      const resp = await adminLogin(loginState);
+      toast.loading("Please wait...");
+      const resp = await loginAdmin(loginState);
+      toast.dismiss();
       if (!resp) {
         toast.error("Account not found");
         return;
       }
 
+      console.log("response", resp);
+
       insertStorage(KEY.ACCOUNT, resp);
+      toast.success("Successfully Login", {
+        onClose: () => redirectToHome(),
+      });
     } catch (error: any) {
       toast.error(error?.response?.data?.message);
+    } finally {
     }
   }
 
@@ -48,7 +61,7 @@ export default function Login() {
         <TextInput
           type="text"
           name="username"
-          label={"Email"}
+          label={"Username"}
           onChange={(e) =>
             dispatch({ type: e.target.name, [e.target.name]: e.target.value })
           }
