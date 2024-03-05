@@ -5,7 +5,6 @@ import { loginReducer } from "@/app/_lib/reducer/admin/LoginReducer";
 import { loginAdmin } from "@/app/_lib/services/Admin.service";
 import { useRouter } from "next/navigation";
 
-import { KEY, insertStorage } from "@/app/_lib/utils/storage.utils";
 import Link from "next/link";
 import { useReducer } from "react";
 import { toast } from "react-toastify";
@@ -18,7 +17,7 @@ export default function Login() {
   });
 
   function redirectToHome() {
-    router.push("/");
+    router.push("/dashboard");
   }
 
   async function handleSubmit() {
@@ -40,13 +39,15 @@ export default function Login() {
         toast.error("Account not found");
         return;
       }
-
-      console.log("response", resp);
-
-      insertStorage(KEY.ACCOUNT, resp);
-      toast.success("Successfully Login", {
-        onClose: () => redirectToHome(),
+      const response = await fetch("/api/login", {
+        method: "POST",
+        mode: "cors",
+        body: JSON.stringify(resp),
       });
+      console.log(response);
+      // toast.success("Successfully Login", {
+      //   onClose: () => redirectToHome(),
+      // });
     } catch (error: any) {
       toast.error(error?.response?.data?.message);
     } finally {
