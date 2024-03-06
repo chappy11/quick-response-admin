@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import { NavRoutes, Routes } from "../_lib/constant/route";
 import { AdminDto, AdminType } from "../_lib/types/Admin.type";
 import { Route } from "../_lib/types/Route.type";
+import { usePathname } from "next/navigation";
 
 export default function AuthLayout({
   children,
@@ -13,6 +14,8 @@ export default function AuthLayout({
   children: React.ReactNode;
 }>) {
   const [users, setUsers] = useState<AdminDto | null>(null);
+  const pathname = usePathname();
+  
   async function getUsers() {
     try {
       const users = await axios.get("/api/user");
@@ -39,25 +42,25 @@ export default function AuthLayout({
     if (users.adminType === AdminType.SUPER) {
       return (
         <Link href={NavRoutes.ADMIN}>
-          <li className=" hover:bg-red-800 w-full cursor-pointer p-3 text-sm">
+          <li className={` hover:bg-red-800 w-full cursor-pointer p-3 text-sm ${pathname.search(NavRoutes.ADMIN) >= 0 ? 'bg-red-800' : '' }`}>
             Admins
           </li>
         </Link>
       );
     }
-  }, [users]);
+  }, [users,pathname]);
 
   const displayRoutes = useMemo(() => {
     return Routes.map((item: Route, index: number) => {
       return (
         <Link href={item.routes} key={index.toString()}>
-          <li className=" hover:bg-red-800 w-full cursor-pointer p-3 text-sm">
+          <li className={` hover:bg-red-800 w-full cursor-pointer p-3 text-sm ${item.routes.search(pathname) >= 0 ? 'bg-red-800' : '' }`}>
             {item.name}
           </li>
         </Link>
       );
     });
-  }, [Routes]);
+  }, [Routes,pathname]);
 
   return (
     <div className=" flex flex-row">
@@ -65,6 +68,7 @@ export default function AuthLayout({
         <div className=" w-full ">
           <nav>
             <ul className=" w-full">
+              <div className=" h-10"/>
               {displayRoutes}
               {displayAdminRoute}
               <li className=" hover:bg-red-800 w-full cursor-pointer p-3 text-sm">

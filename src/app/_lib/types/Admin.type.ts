@@ -11,7 +11,7 @@ export interface AdminDto  {
     email:string;
     mobileNumber:string;
     adminType:AdminType
-    dateCreated:string;
+    dateCreated:string; 
 }
 
 export interface NameDto {

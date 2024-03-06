@@ -2,6 +2,8 @@ import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 import { AdminDto } from "./app/_lib/types/Admin.type";
+import { toast } from "react-toastify";
+
 
 const secretKey = 'secret';
 const key = new TextEncoder().encode(secretKey);
@@ -13,12 +15,13 @@ export async function encrypt(payload: any) {
 
 export async function decrypt(input: string, request: NextRequest): Promise<any> {
     if (!input) {
-        return NextResponse.redirect(new URL('/login', request.url))
+        toast.error('Token is expired',{
+            onClose:()=>NextResponse.redirect(new URL('/login', request.url))
+        })
+        return;
     }
     const { payload } = await jwtVerify(input, key, { algorithms: ['HS256'] });
-    if (!payload) {
-        return NextResponse.redirect(new URL('/login', request.url))
-    }
+    
     return payload
 }
 
@@ -38,6 +41,7 @@ export async function getSession(request: NextRequest) {
     const session = request.cookies.get("user")?.value;
 
     if (!session) {
+  
         return;
     }
     const parsed = decrypt(session, request)
@@ -49,7 +53,10 @@ export async function updateSession(request: NextRequest) {
     const session = request.cookies.get("user")?.value;
 
     if (!session) {
-        return NextResponse.redirect(new URL('/login', request.url))
+        toast.error('Token is expired',{
+            onClose:()=>NextResponse.redirect(new URL('/login', request.url))
+        })
+        return;
     };
 
     const parsed = await decrypt(session, request);

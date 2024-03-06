@@ -6,7 +6,8 @@ export enum NavRoutes {
     DASHBOARD = "/dashboard",
     USERS = "/user",
     RESPONDER = "/responder",
-    ADMIN = "/admin"
+    ADMIN = "/admin",
+    ADMIN_CREATE = '/admin/create'
 }
 
 
