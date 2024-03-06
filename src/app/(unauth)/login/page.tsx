@@ -45,9 +45,13 @@ export default function Login() {
         body: JSON.stringify(resp),
       });
       console.log(response);
-      // toast.success("Successfully Login", {
-      //   onClose: () => redirectToHome(),
-      // });
+      if (response) {
+        toast.success("Successfully Login", {
+          onClose: () => redirectToHome(),
+        });
+      } else {
+        toast.error("Something went wrong");
+      }
     } catch (error: any) {
       toast.error(error?.response?.data?.message);
     } finally {
